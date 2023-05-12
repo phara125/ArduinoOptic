@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30px"
+        android:layout_marginBottom="30px" />
+
+    <Button
+        android:id="@+id/buttonStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:onClick="onClickStart"
+        android:text="Start" />
+
+    <Button
+        android:id="@+id/buttonSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText"
+        android:layout_toEndOf="@+id/buttonStart"
+        android:layout_toRightOf="@+id/buttonStart"
+        android:onClick="onClickSend"
+        android:text="Send" />
+
+    <TextView
+        android:id="@+id/Sensor"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_alignRight="@+id/editText"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/rounded_corner"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:textColor="?android:textColorTertiaryInverse"
+        android:textColorHint="@color/white"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        tools:text="12345" />
+
+    <TextView
+        android:id="@+id/Log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Sensor"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="6dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:isScrollContainer="true"
+        android:scrollbars="vertical"
+        android:textAlignment="viewStart"
+        android:textColor="?colorError"
+        android:textColorHint="@color/white"
+        android:textSize="20sp"
+        tools:text="test\ntest2" />
+
+    <Button
+        android:id="@+id/buttonStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText"
+        android:layout_toEndOf="@+id/buttonSend"
+        android:layout_toRightOf="@+id/buttonSend"
+        android:onClick="onClickStop"
+        android:text="Stop" />
+
+    <Button
+        android:id="@+id/buttonClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText"
+        android:layout_toEndOf="@+id/buttonStop"
+        android:layout_toRightOf="@+id/buttonStop"
+        android:onClick="onClickClear"
+        android:text="Clear" />
+
+</RelativeLayout>
