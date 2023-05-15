@@ -56,13 +56,31 @@
         android:textColorHint="@color/white"
         android:textSize="34sp"
         android:textStyle="bold"
-        tools:text="12345" />
+        tools:text="Sensor" />
+    <TextView
+        android:id="@+id/Timer"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_alignRight="@+id/editText"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="170dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/rounded_corner"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:textColor="?android:textColorTertiaryInverse"
+        android:textColorHint="@color/white"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        tools:text="Timer" />
 
     <TextView
         android:id="@+id/Log"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/Sensor"
+        android:layout_below="@+id/Timer"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="6dp"
@@ -74,7 +92,7 @@
         android:textColor="?colorError"
         android:textColorHint="@color/white"
         android:textSize="20sp"
-        tools:text="test\ntest2" />
+        tools:text="Log" />
 
     <Button
         android:id="@+id/buttonStop"
