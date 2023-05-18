@@ -17,6 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
@@ -27,12 +30,26 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     public final String ACTION_USB_PERMISSION = "com.hariharan.arduinousb.USB_PERMISSION";
     Button startButton, sendButton, clearButton, stopButton;
-    TextView Sensor, Log;
+    TextView Sensor, Log, Timer;
     EditText editText;
     UsbManager usbManager;
     UsbDevice device;
     UsbSerialDevice serialPort;
     UsbDeviceConnection connection;
+
+    Pattern pattern = Pattern.compile("\\d+");
+
+    int resistorValue;
+    boolean mode = true;
+
+    long timer, t, sleep;
+    long tstart = System.currentTimeMillis();
+    int m, s, ms;
+    String strms, strs, strm;
+
+    String svms = "00"; // сотые доли секунд
+    String svs = "00"; // секунды
+    String svm = "00"; // минуты
 
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
         @Override
@@ -41,14 +58,72 @@ public class MainActivity extends AppCompatActivity {
             try {
                 data = new String(arg0, "UTF-8");
                 data.concat("/n");
-                snsrShow(Sensor, data);
+                LoopFunc(data);
+                textShow(Sensor, data);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-
-
         }
     };
+
+    private void LoopFunc(String data) {
+        // время
+        t = System.currentTimeMillis(); // считываем время работы ардуинки
+        timer = (t - tstart); // берем разницу полного времени работы и времени нажатия кнопки и получаем время, которое прошло после нажатия
+
+        s = (int) Math.floor((timer - m * 60000) / 1000); // высчитываем секунды
+        m = (int) Math.floor(timer / 60000); // высчитываем минуты
+        ms = (int) (timer % 1000) / 10; // высчитываем сотые доли секунды
+
+        // преобразуем в удобный вывод
+        // Если число меньше 10, то в нем 1 символ, поэтому, преобразуем в текст и добавляем спереди символ "0"
+        if (ms < 10) strms = "0" + ms;
+        else strms = String.valueOf(ms);
+        if (s < 10) strs = "0" + s;
+        else strs = String.valueOf(s);
+        if (m < 10) strm = "0" + m;
+        else strm = String.valueOf(m);
+
+        // тут мы будем показывать то, что находится на паузе
+        if (mode) // если программа в состоянии стоп/пауза mode=true
+        {
+            String disptime = svm + "." + svs + "." + svms; // формируем строку вывода
+            textShow(Timer, disptime); // вывод на дисплей
+
+            tstart = t; // тут сохраняем время нажатия кнопки, дабы с помощью разницы от общего времени работы вычислить сколько работает секундомер
+            m = s = ms = 0; // сбрасываем значения на 0, они нам больше не нужны ибо мы их сохранили в mode=false
+        }
+
+        if (!mode) // если программа находится в состоянии работы mode=false
+        {
+            // выводим динамически циферки
+            String disptime = svm + "." + svs + "." + svms; // формируем строку вывода
+            textShow(Timer, disptime); // вывод на дисплей
+
+            svms = strms; // сохраняем в переменную милисекунды ибо неожиданно может быть нажата кнопка остановки
+            svs = strs; // так же сохраняем секунды
+            svm = strm; // и минуты
+        }
+
+        // обработка кнопки старт/стоп
+        // Получение в переменную resistorValue показаний датчика
+        resistorValue = 0;
+        Matcher matcher = pattern.matcher(data);
+        if (matcher.find()) {
+            String extractedNumber = matcher.group();
+            resistorValue = Integer.parseInt(extractedNumber);
+        }
+
+        // вывод resistorValue на Sensor
+        if (resistorValue < 500) // если на барьере старт/стоп появился логический 0
+        {
+            if (t - sleep > 1000) { // нельзя брать сигнал с барьера чаще чем 1 раз в 1 секунду
+                sleep = t; // так же это сделано чтобы избежать "дребезга кнопок" используя кнопки без подтяжки, всё это делается программно
+                mode = !mode; // инверсия старт/стоп
+            }
+        }
+    }
+
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -97,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         editText = findViewById(R.id.editText);
         Log = findViewById(R.id.Log);
         Sensor = findViewById(R.id.Sensor);
+        Timer = findViewById(R.id.Timer);
         Log.setMovementMethod(new ScrollingMovementMethod());
         setUiEnabled(false);
         IntentFilter filter = new IntentFilter();
@@ -111,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
         sendButton.setEnabled(bool);
         stopButton.setEnabled(bool);
         Log.setEnabled(bool);
-
     }
 
     public void onClickStart(View view) {
@@ -167,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void snsrShow(TextView tv, CharSequence text) {
+    private void textShow(TextView tv, CharSequence text) {
         final TextView ftv = tv;
         final CharSequence ftext = text;
 
