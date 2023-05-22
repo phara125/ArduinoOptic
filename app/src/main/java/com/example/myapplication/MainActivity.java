@@ -1,12 +1,14 @@
 package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -164,6 +166,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Drawable bulletDrawable = ContextCompat.getDrawable(this, R.drawable.bullet);
+        // Sensor.setCompoundDrawablesWithIntrinsicBounds(null, null, bulletDrawable, null);
+        // Create a boolean variable and bind its value to the color of the bullet
+        // boolean isBulletColorRed = ContextCompat.getColor(this, R.color.black) == ContextCompat.getColor(this, R.color.white);
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         startButton = findViewById(R.id.buttonStart);
         sendButton = findViewById(R.id.buttonSend);
