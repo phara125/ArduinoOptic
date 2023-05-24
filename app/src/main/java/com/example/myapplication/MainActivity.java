@@ -53,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
     String svs = "00"; // секунды
     String svm = "00"; // минуты
 
+    // Для bullet
+    Drawable bulletDrawableSensor, bulletDrawableTimer;
+    int bulletColorRed, bulletColorGreen;
+
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
         @Override
         public void onReceivedData(byte[] arg0) {
@@ -89,6 +93,13 @@ public class MainActivity extends AppCompatActivity {
         // тут мы будем показывать то, что находится на паузе
         if (mode) // если программа в состоянии стоп/пауза mode=true
         {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setBulletRed(bulletDrawableTimer);
+                }
+            });
+
             String disptime = svm + "." + svs + "." + svms; // формируем строку вывода
             textShow(Timer, disptime); // вывод на дисплей
 
@@ -98,6 +109,13 @@ public class MainActivity extends AppCompatActivity {
 
         if (!mode) // если программа находится в состоянии работы mode=false
         {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setBulletGreen(bulletDrawableTimer);
+                }
+            });
+
             // выводим динамически циферки
             String disptime = svm + "." + svs + "." + svms; // формируем строку вывода
             textShow(Timer, disptime); // вывод на дисплей
@@ -124,6 +142,18 @@ public class MainActivity extends AppCompatActivity {
                 mode = !mode; // инверсия старт/стоп
             }
         }
+    }
+
+    private void setBulletGreen(Drawable objDrawable) {
+        // bulletDrawableSensor
+        // bulletDrawableTimer
+        objDrawable = objDrawable.mutate(); // Ensure that the drawable is mutable
+        objDrawable.setTint(bulletColorGreen);
+    }
+
+    private void setBulletRed(Drawable objDrawable) {
+        objDrawable = objDrawable.mutate(); // Ensure that the drawable is mutable
+        objDrawable.setTint(bulletColorRed);
     }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
@@ -166,10 +196,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Drawable bulletDrawable = ContextCompat.getDrawable(this, R.drawable.bullet);
-        // Sensor.setCompoundDrawablesWithIntrinsicBounds(null, null, bulletDrawable, null);
-        // Create a boolean variable and bind its value to the color of the bullet
-        // boolean isBulletColorRed = ContextCompat.getColor(this, R.color.black) == ContextCompat.getColor(this, R.color.white);
+
+        // Retrieve the bullet drawable
+        bulletDrawableTimer = ContextCompat.getDrawable(this, R.drawable.bullet);
+        // Set the desired color for the bullet drawable
+        bulletColorRed = ContextCompat.getColor(this, android.R.color.holo_red_light);
+        bulletColorGreen = ContextCompat.getColor(this, android.R.color.holo_green_light);
+
         usbManager = (UsbManager) getSystemService(this.USB_SERVICE);
         startButton = findViewById(R.id.buttonStart);
         sendButton = findViewById(R.id.buttonSend);
@@ -179,6 +212,15 @@ public class MainActivity extends AppCompatActivity {
         Log = findViewById(R.id.Log);
         Sensor = findViewById(R.id.Sensor);
         Timer = findViewById(R.id.Timer);
+
+        int bulletWidth = bulletDrawableTimer.getIntrinsicWidth();
+        int leftPadding = getResources().getDimensionPixelSize(R.dimen.left_padding);
+        int gapWidth = getResources().getDimensionPixelSize(R.dimen.right_padding);
+        int totalWidth = bulletWidth + gapWidth;
+
+        Timer.setCompoundDrawablesWithIntrinsicBounds(bulletDrawableTimer, null, bulletDrawableTimer, null);
+        Timer.setPadding(leftPadding, 0, totalWidth, 0);
+
         Log.setMovementMethod(new ScrollingMovementMethod());
         setUiEnabled(false);
         IntentFilter filter = new IntentFilter();
