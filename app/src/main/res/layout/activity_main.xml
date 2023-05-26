@@ -16,7 +16,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="30px"
-        android:layout_marginBottom="30px" />
+        android:layout_marginBottom="30px"
+        android:hint="что отправляем?"/>
 
     <Button
         android:id="@+id/buttonStart"

@@ -137,10 +137,26 @@ public class MainActivity extends AppCompatActivity {
         // вывод resistorValue на Sensor
         if (resistorValue < 500) // если на барьере старт/стоп появился логический 0
         {
+            // Делаем зеленым
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setBulletGreen(bulletDrawableSensor);
+                }
+            });
+
             if (t - sleep > 1000) { // нельзя брать сигнал с барьера чаще чем 1 раз в 1 секунду
                 sleep = t; // так же это сделано чтобы избежать "дребезга кнопок" используя кнопки без подтяжки, всё это делается программно
                 mode = !mode; // инверсия старт/стоп
             }
+        } else {
+            // Делаем красным
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setBulletRed(bulletDrawableSensor);
+                }
+            });
         }
     }
 
@@ -199,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Retrieve the bullet drawable
         bulletDrawableTimer = ContextCompat.getDrawable(this, R.drawable.bullet);
+        bulletDrawableSensor = ContextCompat.getDrawable(this, R.drawable.bullet);
         // Set the desired color for the bullet drawable
         bulletColorRed = ContextCompat.getColor(this, android.R.color.holo_red_light);
         bulletColorGreen = ContextCompat.getColor(this, android.R.color.holo_green_light);
@@ -213,13 +230,19 @@ public class MainActivity extends AppCompatActivity {
         Sensor = findViewById(R.id.Sensor);
         Timer = findViewById(R.id.Timer);
 
-        int bulletWidth = bulletDrawableTimer.getIntrinsicWidth();
+        int bulletWidthTimer = bulletDrawableTimer.getIntrinsicWidth();
+        int bulletWidthSensor = bulletDrawableSensor.getIntrinsicWidth();
+
+
         int leftPadding = getResources().getDimensionPixelSize(R.dimen.left_padding);
         int gapWidth = getResources().getDimensionPixelSize(R.dimen.right_padding);
-        int totalWidth = bulletWidth + gapWidth;
+        int totalWidthTimer = bulletWidthTimer + gapWidth;
+        int totalWidthSensor = bulletWidthSensor + gapWidth;
 
         Timer.setCompoundDrawablesWithIntrinsicBounds(bulletDrawableTimer, null, bulletDrawableTimer, null);
-        Timer.setPadding(leftPadding, 0, totalWidth, 0);
+        Timer.setPadding(leftPadding, 0, totalWidthTimer, 0);
+        Sensor.setCompoundDrawablesWithIntrinsicBounds(bulletDrawableSensor, null, bulletDrawableSensor, null);
+        Sensor.setPadding(leftPadding, 0, totalWidthSensor, 0);
 
         Log.setMovementMethod(new ScrollingMovementMethod());
         setUiEnabled(false);
